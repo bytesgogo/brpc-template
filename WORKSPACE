@@ -17,5 +17,5 @@
 
 workspace(name = "brpc_test")
 
-load("@//:brpc_workspace.bzl", "brpc_workspace")
+load("@//thirdparty/brpc:brpc_workspace.bzl", "brpc_workspace")
 brpc_workspace();
