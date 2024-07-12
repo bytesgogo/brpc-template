@@ -42,9 +42,8 @@ cc_binary(
     includes = ["proto/"],
 )
 
-cc_binary(
-    name = "db_server",
-    srcs = ["src/db_service.cpp"],
+cc_library(
+    name = "db_lib",
     deps = [
         ":cc_hilbert_proto",
         "@apache_brpc//:brpc",
@@ -52,5 +51,22 @@ cc_binary(
         "@apache_brpc//:bvar",
         "@apache_brpc//:butil",
     ],
-    includes = ["proto/"],
+    hdrs = glob(["inc/*.h"]),
+)
+
+cc_binary(
+    name = "db_server",
+    srcs = [
+        "src/db_service.cpp",
+        "src/db_main.cpp"
+        ],
+    deps = [
+        ":db_lib",
+        ":cc_hilbert_proto",
+        "@apache_brpc//:brpc",
+        "@apache_brpc//:bthread",
+        "@apache_brpc//:bvar",
+        "@apache_brpc//:butil",
+    ],
+    includes = ["proto/", "inc/"],
 )

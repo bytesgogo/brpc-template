@@ -90,7 +90,7 @@ message QPSResponse {
     optional int32 qps = 2;
 };
 
-service hilbertSDKService {
+service SDKService {
     // 索引
     rpc create_index(IndexRequest) returns (IndexResponse);
     rpc delete_index(IndexRequest) returns (IndexResponse);

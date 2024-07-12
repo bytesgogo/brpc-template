@@ -13,64 +13,6 @@ DEFINE_string(listen_addr, "", "Server listen address, may be IPV4/IPV6/UDS."
 DEFINE_int32(idle_timeout_s, -1, "Connection will be closed if there is no "
              "read/write operations during the last `idle_timeout_s'");
 
-// Your implementation of example::EchoService
-// Notice that implementing brpc::Describable grants the ability to put
-// additional information in /status.
-namespace hilbert {
-class EchoServiceImpl : public hilbertSDKService {
-public:
-    EchoServiceImpl() {}
-    virtual ~EchoServiceImpl() {}
-    virtual void create_index(google::protobuf::RpcController* cntl_base,
-                      const IndexRequest* request,
-                      IndexResponse* response,
-                      google::protobuf::Closure* done) {
-        // This object helps you to call done->Run() in RAII style. If you need
-        // to process the request asynchronously, pass done_guard.release().
-        brpc::ClosureGuard done_guard(done);
-
-        brpc::Controller* cntl =
-            static_cast<brpc::Controller*>(cntl_base);
-
-        // optional: set a callback function which is called after response is sent
-        // and before cntl/req/res is destructed.
-        // cntl->set_after_rpc_resp_fn(std::bind(&EchoServiceImpl::CallAfterRpc,
-        //     std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-
-        // The purpose of following logs is to help you to understand
-        // how clients interact with servers more intuitively. You should
-        // remove these logs in performance-sensitive servers.
-        LOG(INFO) << "Received request[log_id=" << cntl->log_id()
-                  << "] from " << cntl->remote_side()
-                  << " to " << cntl->local_side()
-                  << ": " << request->from()
-                  << " (attached=" << cntl->request_attachment() << ")";
-
-        // Fill response.
-        response->set_id(request->id());
-
-        // You can compress the response by setting Controller, but be aware
-        // that compression may be costly, evaluate before turning on.
-        // cntl->set_response_compress_type(brpc::COMPRESS_TYPE_GZIP);
-
-        cntl->response_attachment().append(cntl->request_attachment());
-    }
-
-    // optional
-    static void CallAfterRpc(brpc::Controller* cntl,
-                        const google::protobuf::Message* req,
-                        const google::protobuf::Message* res) {
-        // at this time res is already sent to client, but cntl/req/res is not destructed
-        std::string req_str;
-        std::string res_str;
-        json2pb::ProtoMessageToJson(*req, &req_str, NULL);
-        json2pb::ProtoMessageToJson(*res, &res_str, NULL);
-        LOG(INFO) << "req:" << req_str
-                    << " res:" << res_str;
-    }
-};
-}  // namespace example
-
 int main(int argc, char* argv[]) {
     // Parse gflags. We recommend you to use gflags as well.
     // GFLAGS_NS::ParseCommandLineFlags(&argc, &argv, true);
@@ -79,7 +21,7 @@ int main(int argc, char* argv[]) {
     brpc::Server server;
 
     // Instance of your service.
-    hilbert::EchoServiceImpl echo_service_impl;
+    hilbert::SDKServiceImpl echo_service_impl;
 
     // Add the service into server. Notice the second parameter, because the
     // service is put on stack, we don't want server to delete it, otherwise

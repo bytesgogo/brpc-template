@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
 
     // Normally, you should not call a Channel directly, but instead construct
     // a stub Service wrapping it. stub can be shared by all threads as well.
-    hilbert::hilbertSDKService_Stub stub(&channel);
+    hilbert::SDKService_Stub stub(&channel);
 
     // Send a request and wait for the response every 1 second.
     int log_id = 0;
