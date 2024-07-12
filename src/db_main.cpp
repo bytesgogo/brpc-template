@@ -4,7 +4,7 @@
 #include <butil/logging.h>
 #include <brpc/server.h>
 #include <json2pb/pb_to_json.h>
-#include "echo.pb.h"
+#include "db_service.h"
 
 DEFINE_bool(echo_attachment, true, "Echo attachment as well");
 DEFINE_int32(port, 8000, "TCP Port of this server");
@@ -21,9 +21,9 @@ class EchoServiceImpl : public hilbertSDKService {
 public:
     EchoServiceImpl() {}
     virtual ~EchoServiceImpl() {}
-    virtual void Echo(google::protobuf::RpcController* cntl_base,
-                      const EchoRequest* request,
-                      EchoResponse* response,
+    virtual void create_index(google::protobuf::RpcController* cntl_base,
+                      const IndexRequest* request,
+                      IndexResponse* response,
                       google::protobuf::Closure* done) {
         // This object helps you to call done->Run() in RAII style. If you need
         // to process the request asynchronously, pass done_guard.release().
@@ -43,21 +43,17 @@ public:
         LOG(INFO) << "Received request[log_id=" << cntl->log_id()
                   << "] from " << cntl->remote_side()
                   << " to " << cntl->local_side()
-                  << ": " << request->message()
+                  << ": " << request->from()
                   << " (attached=" << cntl->request_attachment() << ")";
 
         // Fill response.
-        response->set_message(request->message());
+        response->set_id(request->id());
 
         // You can compress the response by setting Controller, but be aware
         // that compression may be costly, evaluate before turning on.
         // cntl->set_response_compress_type(brpc::COMPRESS_TYPE_GZIP);
 
-        if (FLAGS_echo_attachment) {
-            // Set attachment which is wired to network directly instead of
-            // being serialized into protobuf messages.
-            cntl->response_attachment().append(cntl->request_attachment());
-        }
+        cntl->response_attachment().append(cntl->request_attachment());
     }
 
     // optional
@@ -83,7 +79,7 @@ int main(int argc, char* argv[]) {
     brpc::Server server;
 
     // Instance of your service.
-    example::EchoServiceImpl echo_service_impl;
+    hilbert::EchoServiceImpl echo_service_impl;
 
     // Add the service into server. Notice the second parameter, because the
     // service is put on stack, we don't want server to delete it, otherwise

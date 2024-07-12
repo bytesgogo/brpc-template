@@ -65,3 +65,30 @@ cc_binary(
     ],
     includes = ["proto/"],
 )
+
+
+cc_binary(
+    name = "db_client",
+    srcs = ["src/db_client.cpp"],
+    deps = [
+        ":cc_hilbert_proto",
+        "@apache_brpc//:brpc",
+        "@apache_brpc//:bthread",
+        "@apache_brpc//:bvar",
+        "@apache_brpc//:butil",
+    ],
+    includes = ["proto/"],
+)
+
+cc_binary(
+    name = "db_server",
+    srcs = ["src/db_service.cpp"],
+    deps = [
+        ":cc_hilbert_proto",
+        "@apache_brpc//:brpc",
+        "@apache_brpc//:bthread",
+        "@apache_brpc//:bvar",
+        "@apache_brpc//:butil",
+    ],
+    includes = ["proto/"],
+)

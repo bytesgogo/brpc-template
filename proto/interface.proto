@@ -1,0 +1,105 @@
+syntax="proto3";
+package hilbert;
+
+option cc_generic_services = true;
+
+// 响应结果
+message ResultStatus {
+    optional float code = 1;
+    optional string message = 2;
+};
+
+// 向量
+message Vector {
+    repeated float data = 1;
+};
+
+// 图片
+message InputImage {
+    optional string name = 1;
+};
+
+message OutputImage {
+    optional string name = 1;
+    optional float dist = 2;
+};
+
+message IndexRequest {
+    // 来源
+    optional string from = 1;
+    // 索引id，除了创建时不用传，其他操作都需要传，和底库向量一一对应（一个底库对应一个index）
+    optional string id = 2;
+    // 向量维度
+    optional int32 dim = 3;
+    // 可选"flat","ivf"两种
+    optional string type = 4;
+};
+
+message IndexResponse {
+    // Index id，在服务里维护，后续前端可以根据id选择对应的index
+    optional string id = 1;
+
+    // 错误码
+    optional ResultStatus status = 2;
+};
+
+message IndexAddRequest {
+    // Index id
+    optional string id = 1;
+
+    // 向量
+    repeated InputImage images = 2;
+};
+
+message IndexAddResponse {
+    // Index id
+    optional string id = 1;
+
+    // 错误码
+    optional ResultStatus status = 2;
+};
+
+message IndexSearchRequest {
+    // Index id
+    optional string id = 1;
+
+    // 输入中需要包含图片名
+    repeated InputImage images = 2;
+};
+
+message IndexSearchImageResult {
+    // 一个query对应多个搜索结果
+    optional InputImage input = 1;
+    repeated OutputImage outputs = 2;
+};
+
+message IndexSearchResponse {
+    optional ResultStatus status = 1;
+
+    // 搜索结果
+    repeated IndexSearchImageResult results = 2;
+};
+
+message QPSRequest {
+    // qps统计区间（1min、5min、10min）
+    optional int32 range = 1;
+};
+
+message QPSResponse {
+    optional ResultStatus status = 1;
+    optional int32 qps = 2;
+};
+
+service hilbertSDKService {
+    // 索引
+    rpc create_index(IndexRequest) returns (IndexResponse);
+    rpc delete_index(IndexRequest) returns (IndexResponse);
+
+    // 添加向量
+    rpc add(IndexAddRequest) returns (IndexAddResponse);
+
+    // 查询相似图片
+    rpc search(IndexSearchRequest) returns (IndexSearchResponse);
+    // 查询qps
+    rpc search_qps(QPSRequest) returns (QPSResponse);
+};
