@@ -19,13 +19,7 @@ void SDKServiceImpl::create_index(google::protobuf::RpcController* cntl_base,
     // to process the request asynchronously, pass done_guard.release().
     brpc::ClosureGuard done_guard(done);
 
-    brpc::Controller* cntl =
-        static_cast<brpc::Controller*>(cntl_base);
-
-    // optional: set a callback function which is called after response is sent
-    // and before cntl/req/res is destructed.
-    // cntl->set_after_rpc_resp_fn(std::bind(&EchoServiceImpl::CallAfterRpc,
-    //     std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+    brpc::Controller* cntl = static_cast<brpc::Controller*>(cntl_base);
 
     // The purpose of following logs is to help you to understand
     // how clients interact with servers more intuitively. You should
@@ -36,6 +30,7 @@ void SDKServiceImpl::create_index(google::protobuf::RpcController* cntl_base,
                 << ": " << request->from()
                 << " (attached=" << cntl->request_attachment() << ")";
 
+    LOG(INFO) << "create_index" << " logid: " << cntl->log_id();
     // Fill response.
     response->set_id(request->id());
 
@@ -43,32 +38,55 @@ void SDKServiceImpl::create_index(google::protobuf::RpcController* cntl_base,
     // that compression may be costly, evaluate before turning on.
     // cntl->set_response_compress_type(brpc::COMPRESS_TYPE_GZIP);
 
-    cntl->response_attachment().append(cntl->request_attachment());
+    // TODO:实现业务逻辑
 }
 
 void SDKServiceImpl::delete_index(google::protobuf::RpcController* cntl_base,
                       const IndexRequest* request,
                       IndexResponse* response,
                       google::protobuf::Closure* done) 
-                      {
+{
+    brpc::ClosureGuard done_guard(done);
 
-                      }
+    brpc::Controller* cntl = static_cast<brpc::Controller*>(cntl_base);
+
+    // TODO:实现业务逻辑
+    LOG(INFO) << "delete_index" << " logid: " << cntl->log_id();
+    response->set_id(request->id());
+}
+
 void SDKServiceImpl::add(google::protobuf::RpcController* cntl_base,
                       const IndexAddRequest* request,
                       IndexAddResponse* response,
                       google::protobuf::Closure* done) {
+    brpc::ClosureGuard done_guard(done);
 
-                      }
+    brpc::Controller* cntl = static_cast<brpc::Controller*>(cntl_base);
+
+    // TODO:实现业务逻辑
+    LOG(INFO) << "add" << " logid: " << cntl->log_id();
+}
 void SDKServiceImpl::search(google::protobuf::RpcController* cntl_base,
                       const IndexSearchRequest* request,
                       IndexSearchResponse* response,
                       google::protobuf::Closure* done) {
+    brpc::ClosureGuard done_guard(done);
 
-                      }
+    brpc::Controller* cntl = static_cast<brpc::Controller*>(cntl_base);
+
+    // TODO:实现业务逻辑
+    LOG(INFO) << "search" << " logid: " << cntl->log_id();
+}
 void SDKServiceImpl::search_qps(google::protobuf::RpcController* cntl_base,
                       const QPSRequest* request,
                       QPSResponse* response,
                       google::protobuf::Closure* done) {
+    brpc::ClosureGuard done_guard(done);
 
-                      }
+    brpc::Controller* cntl = static_cast<brpc::Controller*>(cntl_base);
+
+    // TODO:实现业务逻辑
+    response->set_qps(10);
+    LOG(INFO) << "search_qps" << " logid: " << cntl->log_id();
+}
 }

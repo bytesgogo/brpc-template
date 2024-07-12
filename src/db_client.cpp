@@ -11,9 +11,140 @@ DEFINE_string(protocol, "baidu_std", "Protocol type. Defined in src/brpc/options
 DEFINE_string(connection_type, "", "Connection type. Available values: single, pooled, short");
 DEFINE_string(server, "0.0.0.0:8000", "IP Address of server");
 DEFINE_string(load_balancer, "", "The algorithm for load balancing");
-DEFINE_int32(timeout_ms, 100, "RPC timeout in milliseconds");
+DEFINE_int32(timeout_ms, 1000, "RPC timeout in milliseconds");
 DEFINE_int32(max_retry, 3, "Max retries(not including the first RPC)");
 DEFINE_int32(interval_ms, 1000, "Milliseconds between consecutive requests");
+
+
+void send_create_index(int &log_id, hilbert::SDKService_Stub &stub) {
+    hilbert::IndexRequest request;
+    hilbert::IndexResponse response;
+    brpc::Controller cntl;
+
+    request.set_id(std::to_string(log_id));
+
+    cntl.set_log_id(log_id ++);  // set by user
+    // Set attachment which is wired to network directly instead of
+    // being serialized into protobuf messages.
+    cntl.request_attachment().append(FLAGS_attachment);
+
+    // Because `done'(last parameter) is NULL, this function waits until
+    // the response comes back or error occurs(including timedout).
+    stub.create_index(&cntl, &request, &response, NULL);
+    if (!cntl.Failed()) {
+        LOG(INFO) << "Received response from " << cntl.remote_side()
+            << " to " << cntl.local_side()
+            << ": " << response.id() << " (attached="
+            << cntl.response_attachment() << ")"
+            << " latency=" << cntl.latency_us() << "us";
+    } else {
+        LOG(WARNING) << cntl.ErrorText();
+    }
+}
+
+void send_delete_index(int &log_id, hilbert::SDKService_Stub &stub) {
+    hilbert::IndexRequest request;
+    hilbert::IndexResponse response;
+    brpc::Controller cntl;
+
+    request.set_id(std::to_string(log_id));
+
+    cntl.set_log_id(log_id ++);  // set by user
+    // Set attachment which is wired to network directly instead of
+    // being serialized into protobuf messages.
+    cntl.request_attachment().append(FLAGS_attachment);
+
+    // Because `done'(last parameter) is NULL, this function waits until
+    // the response comes back or error occurs(including timedout).
+    stub.delete_index(&cntl, &request, &response, NULL);
+    if (!cntl.Failed()) {
+        LOG(INFO) << "Received response from " << cntl.remote_side()
+            << " to " << cntl.local_side()
+            << ": " << response.id() << " (attached="
+            << cntl.response_attachment() << ")"
+            << " latency=" << cntl.latency_us() << "us";
+    } else {
+        LOG(WARNING) << cntl.ErrorText();
+    }
+}
+
+void send_add_vector(int &log_id, hilbert::SDKService_Stub &stub) {
+    hilbert::IndexAddRequest request;
+    hilbert::IndexAddResponse response;
+    brpc::Controller cntl;
+
+    request.set_id(std::to_string(log_id));
+
+    cntl.set_log_id(log_id ++);  // set by user
+    // Set attachment which is wired to network directly instead of
+    // being serialized into protobuf messages.
+    cntl.request_attachment().append(FLAGS_attachment);
+
+    // Because `done'(last parameter) is NULL, this function waits until
+    // the response comes back or error occurs(including timedout).
+    stub.add(&cntl, &request, &response, NULL);
+    if (!cntl.Failed()) {
+        LOG(INFO) << "Received response from " << cntl.remote_side()
+            << " to " << cntl.local_side()
+            << ": " << response.id() << " (attached="
+            << cntl.response_attachment() << ")"
+            << " latency=" << cntl.latency_us() << "us";
+    } else {
+        LOG(WARNING) << cntl.ErrorText();
+    }
+}
+
+void send_search(int &log_id, hilbert::SDKService_Stub &stub) {
+    hilbert::IndexSearchRequest request;
+    hilbert::IndexSearchResponse response;
+    brpc::Controller cntl;
+
+    request.set_id(std::to_string(log_id));
+
+    cntl.set_log_id(log_id ++);  // set by user
+    // Set attachment which is wired to network directly instead of
+    // being serialized into protobuf messages.
+    cntl.request_attachment().append(FLAGS_attachment);
+
+    // Because `done'(last parameter) is NULL, this function waits until
+    // the response comes back or error occurs(including timedout).
+    stub.search(&cntl, &request, &response, NULL);
+    if (!cntl.Failed()) {
+        LOG(INFO) << "Received response from " << cntl.remote_side()
+            << " to " << cntl.local_side()
+            << ": " << response.results_size() << " (attached="
+            << cntl.response_attachment() << ")"
+            << " latency=" << cntl.latency_us() << "us";
+    } else {
+        LOG(WARNING) << cntl.ErrorText();
+    }
+}
+
+void send_search_qps(int &log_id, hilbert::SDKService_Stub &stub) {
+    hilbert::QPSRequest request;
+    hilbert::QPSResponse response;
+    brpc::Controller cntl;
+
+    request.set_range(1);
+
+    cntl.set_log_id(log_id ++);  // set by user
+    // Set attachment which is wired to network directly instead of
+    // being serialized into protobuf messages.
+    cntl.request_attachment().append(FLAGS_attachment);
+
+    // Because `done'(last parameter) is NULL, this function waits until
+    // the response comes back or error occurs(including timedout).
+    stub.search_qps(&cntl, &request, &response, NULL);
+    if (!cntl.Failed()) {
+        LOG(INFO) << "Received response from " << cntl.remote_side()
+            << " to " << cntl.local_side()
+            << ": " << response.qps() << " (attached="
+            << cntl.response_attachment() << ")"
+            << " latency=" << cntl.latency_us() << "us";
+    } else {
+        LOG(WARNING) << cntl.ErrorText();
+    }
+}
 
 int main(int argc, char* argv[]) {
     // Parse gflags. We recommend you to use gflags as well.
@@ -43,30 +174,12 @@ int main(int argc, char* argv[]) {
     while (!brpc::IsAskedToQuit()) {
         // We will receive response synchronously, safe to put variables
         // on stack.
-        hilbert::IndexRequest request;
-        hilbert::IndexResponse response;
-        brpc::Controller cntl;
-
-        request.set_id(std::to_string(log_id));
-
-        cntl.set_log_id(log_id ++);  // set by user
-        // Set attachment which is wired to network directly instead of
-        // being serialized into protobuf messages.
-        cntl.request_attachment().append(FLAGS_attachment);
-
-        // Because `done'(last parameter) is NULL, this function waits until
-        // the response comes back or error occurs(including timedout).
-        stub.create_index(&cntl, &request, &response, NULL);
-        if (!cntl.Failed()) {
-            LOG(INFO) << "Received response from " << cntl.remote_side()
-                << " to " << cntl.local_side()
-                << ": " << response.id() << " (attached="
-                << cntl.response_attachment() << ")"
-                << " latency=" << cntl.latency_us() << "us";
-        } else {
-            LOG(WARNING) << cntl.ErrorText();
-        }
-        usleep(FLAGS_interval_ms * 1000L);
+        send_create_index(log_id, stub);
+        send_delete_index(log_id, stub);
+        send_add_vector(log_id, stub);
+        send_search(log_id, stub);
+        send_search_qps(log_id, stub);
+        usleep(FLAGS_interval_ms * 10L);
     }
 
     LOG(INFO) << "EchoClient is going to quit";
