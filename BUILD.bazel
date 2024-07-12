@@ -30,44 +30,6 @@ cc_proto_library(
 )
 
 cc_binary(
-    name = "test",
-    srcs = ["test.cc"],
-    deps = [
-        "@apache_brpc//:brpc",
-        "@apache_brpc//:bthread",
-        "@apache_brpc//:bvar",
-        "@apache_brpc//:butil",
-    ],
-)
-
-cc_binary(
-    name = "client",
-    srcs = ["src/client.cpp"],
-    deps = [
-        ":cc_hilbert_proto",
-        "@apache_brpc//:brpc",
-        "@apache_brpc//:bthread",
-        "@apache_brpc//:bvar",
-        "@apache_brpc//:butil",
-    ],
-    includes = ["proto/"],
-)
-
-cc_binary(
-    name = "server",
-    srcs = ["src/server.cpp"],
-    deps = [
-        ":cc_hilbert_proto",
-        "@apache_brpc//:brpc",
-        "@apache_brpc//:bthread",
-        "@apache_brpc//:bvar",
-        "@apache_brpc//:butil",
-    ],
-    includes = ["proto/"],
-)
-
-
-cc_binary(
     name = "db_client",
     srcs = ["src/db_client.cpp"],
     deps = [
