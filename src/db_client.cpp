@@ -1,3 +1,13 @@
+// db_client.cpp
+// 功能概述: 
+// 作者: bytesgogo
+// 创建日期: 2024.07.12 15:54
+// 版本: v1.0.0
+// 版权信息: bytesgogo
+
+#ifndef _BYTESGOGO_db_client_H
+#define _BYTESGOGO_db_client_H
+
 // A client sending requests to server every 1 second.
 
 #include <gflags/gflags.h>
@@ -185,3 +195,4 @@ int main(int argc, char* argv[]) {
     LOG(INFO) << "EchoClient is going to quit";
     return 0;
 }
+#endif // _BYTESGOGO_db_client_H

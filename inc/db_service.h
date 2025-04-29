@@ -1,12 +1,12 @@
 // db_service.h
 // 功能概述: 
-// 作者: linjinzhu
+// 作者: bytesgogo
 // 创建日期: 2024.07.12 15:12
 // 版本: v1.0.0
-// 版权信息: Copyright (c) 2024 Elemem Tech. All rights reserved.
+// 版权信息: bytesgogo
 
-#ifndef _HILBERT_db_service_H
-#define _HILBERT_db_service_H
+#ifndef _BYTESGOGO_db_service_H
+#define _BYTESGOGO_db_service_H
 
 #include "interface.pb.h"
 
@@ -38,4 +38,4 @@ public:
 };
 
 }
-#endif // _HILBERT_db_service_H
+#endif // _BYTESGOGO_db_service_H

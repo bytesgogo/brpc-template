@@ -1,3 +1,14 @@
+// db_main.cpp
+// 功能概述: 
+// 作者: bytesgogo
+// 创建日期: 2024.07.12 15:53
+// 版本: v1.0.0
+// 版权信息: bytesgogo
+
+#ifndef _BYTESGOGO_db_main_H
+#define _BYTESGOGO_db_main_H
+
+
 // A server to receive EchoRequest and send back EchoResponse.
 
 #include <gflags/gflags.h>
@@ -53,3 +64,4 @@ int main(int argc, char* argv[]) {
     server.RunUntilAskedToQuit();
     return 0;
 }
+#endif // _BYTESGOGO_db_main_H
