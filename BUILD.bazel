@@ -52,6 +52,12 @@ cc_library(
         "@apache_brpc//:butil",
     ],
     hdrs = glob(["inc/*.h"]),
+    copts = [
+        "-std=c++20",
+        "-g",
+        "-O0",
+        "-lpthread",
+    ],
 )
 
 cc_binary(
@@ -69,4 +75,10 @@ cc_binary(
         "@apache_brpc//:butil",
     ],
     includes = ["proto/", "inc/"],
+        copts = [
+        "-std=c++20",
+        "-g",
+        "-O0",
+        "-lpthread",
+    ],
 )
